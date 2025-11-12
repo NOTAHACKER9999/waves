@@ -1,228 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=IE7">
-    <meta property="og:site_name" content="Glitchy Waves">
-    <meta name="twitter:site" content="Glitchy Waves">
-    <meta name="theme-color" content="#0056D2">
-    <meta name="description" content="Glitchy Waves - Explore, Play, and Surf the Glitched Web."/>
-    <meta property="og:title" content="Glitchy Waves"/>
-    <meta property="og:description" content="Glitchy Waves - Explore, Play, and Surf the Glitched Web."/>
-    <meta property="og:image" content="/assets/images/icons/favicon.ico"/>
-    <meta property="twitter:title" content="Glitchy Waves"/>
-    <meta property="twitter:description" content="Glitchy Waves - Explore, Play, and Surf the Glitched Web."/>
-    <meta property="twitter:image" content="/assets/images/icons/favicon.ico"/>
-    <meta property="twitter:card" content="summary"/>
-    <title>Glitchy Waves</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=IE7">
+  <meta property="og:site_name" content="Glitchy Waves">
+  <meta name="twitter:site" content="Glitchy Waves">
+  <meta name="theme-color" content="#0056D2">
+  <meta name="description" content="Glitchy Waves - Explore, Play, and Surf the Glitched Web."/>
+  <meta property="og:title" content="Glitchy Waves"/>
+  <meta property="og:description" content="Glitchy Waves - Explore, Play, and Surf the Glitched Web."/>
+  <meta property="og:image" content="/assets/images/icons/favicon.ico"/>
+  <meta property="twitter:title" content="Glitchy Waves"/>
+  <meta property="twitter:description" content="Glitchy Waves - Explore, Play, and Surf the Glitched Web."/>
+  <meta property="twitter:image" content="/assets/images/icons/favicon.ico"/>
+  <meta property="twitter:card" content="summary"/>
+  <title>Glitchy Waves</title>
 
-    <link rel="icon" href="/assets/images/icons/favicon.ico" type="image/x-icon" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="icon" href="/assets/images/icons/favicon.ico" type="image/x-icon" />
+  <link rel="preload" href="/assets/css/index.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <link rel="preload" href="/assets/css/vendors/font-awesome/css/all.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <link rel="preload" href="/assets/css/settings.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <link rel="preload" href="/assets/css/games.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <link rel="preload" href="/assets/css/toast.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <link rel="preload" href="/assets/css/vendors/nprogress/nprogress.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript>
     <link rel="stylesheet" href="/assets/css/index.css" />
     <link rel="stylesheet" href="/assets/css/vendors/font-awesome/css/all.css" />
-    <link rel="stylesheet" href="/assets/css/settings.css" />
-    <link rel="stylesheet" href="/assets/css/games.css" />
-    <link rel="stylesheet" href="/assets/css/toast.css" />
-    <link rel="stylesheet" href="/assets/css/vendors/nprogress/nprogress.css" />
+  </noscript>
 
-    <style>
-        /* === Movies Overlay === */
-        #moviesOverlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(6px);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
+  <script>
+    (function() {
+      const fixedTitle = document.title;
+      const titleObserver = new MutationObserver(() => {
+        if (document.title !== fixedTitle) {
+          document.title = fixedTitle;
         }
-
-        #moviesOverlay .overlay-content {
-            position: relative;
-            width: 80%;
-            height: 80%;
-            background: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            animation: fadeIn 0.3s ease;
-        }
-
-        #moviesOverlay iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        #closeMovies {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 28px;
-            background: transparent;
-            border: none;
-            color: white;
-            cursor: pointer;
-            z-index: 10;
-            transition: transform 0.2s ease;
-        }
-
-        #closeMovies:hover {
-            transform: scale(1.2);
-        }
-
-        @keyframes fadeIn {
-            from {opacity: 0; transform: scale(0.95);}
-            to {opacity: 1; transform: scale(1);}
-        }
-
-        /* === Movies Icon Button (next to Games) === */
-        #movies {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.2s ease, filter 0.2s ease;
-        }
-
-        #movies img {
-            width: 38px;
-            height: 38px;
-            border-radius: 8px;
-        }
-
-        #movies:hover {
-            transform: scale(1.1);
-            filter: brightness(1.2);
-        }
-    </style>
+      });
+      const titleElement = document.querySelector('title');
+      if (titleElement) {
+        titleObserver.observe(titleElement, { childList: true });
+      }
+      Object.defineProperty(document, 'title', {
+        get: function() { return fixedTitle; },
+        set: function(_) {}
+      });
+    })();
+  </script>
 </head>
 
 <body>
-    <script src="/assets/js/core/load.js"></script>
-    <script src="/assets/js/features/settings.js"></script>
-    <script type="module" src="/assets/js/index.js"></script>
-    <script src="/assets/js/core/register.js" defer></script>
+  <script>
+    (function () {
+      const encS = "c2NyYW1qZXQ=";
+      const encU = "dWx0cmF2aW9sZXQ=";
+      const decode = str => atob(str);
+      let backend = decode(encS);
+      try {
+        const storedBackend = localStorage.getItem('backend');
+        if (storedBackend === decode(encU)) {
+          backend = decode(encU);
+        }
+      } catch (e) {}
+      document.write(unescape('%3Cscript src="/b?id=1"%3E%3C/script%3E'));
+      if (backend === decode(encS)) {
+        document.write(unescape('%3Cscript src="/b?id=2"%3E%3C/script%3E'));
+      } else {
+        document.write(unescape('%3Cscript src="/b?id=3"%3E%3C/script%3E'));
+        document.write(unescape('%3Cscript src="/b?id=4"%3E%3C/script%3E'));
+      }
+    })();
+  </script>
 
-    <nav class="sidebar">
-        <div class="tabs-header"><span>Tabs</span></div>
-        <button id="add-tab-btn"><i class="fa-regular fa-plus"></i> New Tab</button>
-        <div id="tabs-container" class="tabs-container"></div>
-    </nav>
+  <script src="/assets/js/core/load.js"></script>
+  <script src="/assets/js/features/settings.js"></script>
+  <script type="module" src="/assets/js/index.js"></script>
+  <script src="/assets/js/core/register.js" defer></script>
 
-    <main class="content-wrapper">
-        <div class="main-header">
-            <div class="nav-controls">
-                <a id="toggle-sidebar-btn" href="#"><i class="fa-light fa-table-rows"></i></a>
-                <a id="backIcon" href="#"><i class="fa-regular fa-chevron-left"></i></a>
-                <a id="forwardIcon" href="#"><i class="fa-regular fa-chevron-right"></i></a>
-                <a id="refreshIcon" href="#"><i class="fa-regular fa-rotate-right"></i></a>
-            </div>
+  <nav class="sidebar">
+    <div class="tabs-header"><span>Tabs</span></div>
+    <button id="add-tab-btn"><i class="fa-regular fa-plus"></i> New Tab</button>
+    <div id="tabs-container" class="tabs-container"></div>
+  </nav>
 
-            <div class="omnibox">
-                <i id="lockIcon" class="fa-regular fa-unlock-keyhole"></i>
-                <input type="text" id="searchInputt" placeholder="Search or enter address" autocomplete="off">
-                <div id="suggestions-container-nav" class="suggestions-box"></div>
-            </div>
+  <main class="content-wrapper">
+    <div class="main-header">
+      <div class="nav-controls">
+        <a id="toggle-sidebar-btn" href="#"><i class="fa-light fa-table-rows"></i></a>
+        <a id="backIcon" href="#"><i class="fa-regular fa-chevron-left"></i></a>
+        <a id="forwardIcon" href="#"><i class="fa-regular fa-chevron-right"></i></a>
+        <a id="refreshIcon" href="#"><i class="fa-regular fa-rotate-right"></i></a>
+      </div>
 
-            <div class="window-controls">
-                <a href="/"><i class="fa-regular fa-house-chimney-window"></i></a>
-                <a id="fullscreenBtn" href="#"><i class="fa-regular fa-expand"></i></a>
-                <a id="splitViewBtn" href="#"><i class="fa-regular fa-table-columns"></i></a>
-                <a id="erudaBtn" href="#"><i class="fa-regular fa-square-code"></i></a>
-            </div>
+      <div class="omnibox">
+        <i id="lockIcon" class="fa-regular fa-unlock-keyhole"></i>
+        <input type="text" id="searchInputt" placeholder="Search or enter address" autocomplete="off">
+        <div id="suggestions-container-nav" class="suggestions-box"></div>
+      </div>
+
+      <div class="window-controls">
+        <a href="/"><i class="fa-regular fa-house-chimney-window"></i></a>
+        <a id="fullscreenBtn" href="#"><i class="fa-regular fa-expand"></i></a>
+        <a id="splitViewBtn" href="#"><i class="fa-regular fa-table-columns"></i></a>
+        <a id="erudaBtn" href="#"><i class="fa-regular fa-square-code"></i></a>
+      </div>
+    </div>
+
+    <div id="left-icons">
+      <div id="branding-container" class="icon-btn">
+        <span id="brand"></span>
+        <div id="oneko"></div>
+      </div>
+
+      <a href="#" id="games" class="icon-btn" title="Games">
+        <i class="fa-solid fa-gamepad-modern"></i>
+      </a>
+
+      <!-- New Movies Button -->
+      <a href="#" id="movies" class="icon-btn" title="Movies">
+        <img src="https://raw.githubusercontent.com/NOTAHACKER9999/waves/refs/heads/main/Custom/Logos/Movies.png" alt="Movies" style="width:38px;height:38px;border-radius:8px;">
+      </a>
+
+      <div id="arrow-pointer" class="arrow">
+        <svg class="arrow-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 40" width="52" height="40">
+          <path d="M2.5,18.5 C10.5,15.5 18.5,12.5 26.5,10.5 C34.5,8.5 42.5,7.5 50.5,7.5" stroke="#FFF" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M45.5,2.5 L50.5,7.5 L45.5,12.5" stroke="#FFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="arrow-text">Games here</span>
+      </div>
+    </div>
+
+    <div id="right-top-icons">
+      <a href="#" id="settings" class="icon-btn" title="Settings">
+        <i class="settings fa-regular fa-gear"></i>
+      </a>
+    </div>
+
+    <div id="settings-menu" class="settings-menu"></div>
+    <div id="overlay" class="overlay"></div>
+
+    <div class="main-container">
+      <div class="search-title"></div>
+      <div class="search-bar">
+        <div class="light-border"></div>
+        <div class="light-inset-bg"></div>
+        <div class="light"></div>
+        <i style="position:absolute;z-index:4;top:50%;margin-left:-10px;transform:translateY(-50%);font-size:18px;color:#ffffff69;pointer-events:none;" class="fa-regular fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Have anything in mind?" autocomplete="off">
+        <span class="shortcut-indicator">Ctrl + E</span>
+      </div>
+    </div>
+
+    <div id="erudaLoadingScreen" style="display:none">Eruda is loading...</div>
+
+    <div id="bookmarks-container">
+      <div class="bookmarks-header">
+        <h3 id="bookmarks-title">Bookmarks</h3>
+        <button id="bookmarks-edit-toggle">Edit</button>
+      </div>
+      <div class="bookmarks-wrapper">
+        <ul id="bookmarks-list">
+          <li class="bookmark-item-add">
+            <button id="add-bookmark-btn"><i class="fa-regular fa-plus"></i></button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="games-menu" class="games-menu">
+      <div class="games-menu-content">
+        <div class="games-menu-header"><h2>Games</h2></div>
+        <i style="position:absolute;top:85px;z-index:9999;margin-left:3px;transform:translateY(-50%);font-size:18px;color:#ffffff69;pointer-events:none;" class="fa-regular fa-magnifying-glass"></i>
+        <div class="games-search-bar" style="position:relative;">
+          <input type="text" id="gamesSearchInput" placeholder="Search for games..." autocomplete="off">
         </div>
-
-        <!-- Left icons -->
-        <div id="left-icons">
-            <div id="branding-container" class="icon-btn">
-                <span id="brand"></span>
-                <div id="oneko"></div>
-            </div>
-
-            <!-- Games -->
-            <a href="#" id="games" class="icon-btn" title="Games">
-                <i class="fa-solid fa-gamepad-modern"></i>
-            </a>
-
-            <!-- Movies (new) -->
-            <a href="#" id="movies" class="icon-btn" title="Movies">
-                <img src="https://raw.githubusercontent.com/NOTAHACKER9999/waves/refs/heads/main/Custom/Logos/Movies.png" alt="Movies">
-            </a>
-
-            <div id="arrow-pointer" class="arrow">
-                <svg class="arrow-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 40" width="52" height="40">
-                    <path d="M2.5, 18.5 C10.5, 15.5 18.5, 12.5 26.5, 10.5 C34.5, 8.5 42.5, 7.5 50.5, 7.5" stroke="#FFF" stroke-width="2" fill="none" stroke-linecap="round"/>
-                    <path d="M45.5, 2.5 L50.5, 7.5 L45.5, 12.5" stroke="#FFF" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                <span class="arrow-text">Games here</span>
-            </div>
+        <div class="games-grid-container">
+          <div class="games-grid"></div>
+          <div id="gamesSentinel" class="games-sentinel"></div>
         </div>
+      </div>
+    </div>
 
-        <!-- Right icons -->
-        <div id="right-top-icons">
-            <a href="#" id="settings" class="icon-btn" title="Settings">
-                <i class="settings fa-regular fa-gear"></i>
-            </a>
+    <div id="bookmark-prompt" class="popup" style="display:none;">
+      <div class="input-container">
+        <label for="bookmarkName">Bookmark Name:</label>
+        <input type="text" id="bookmarkName" placeholder="My Cool Website" autocomplete="off">
+        <label for="bookmarkUrl" style="margin-top:15px;">Bookmark URL:</label>
+        <input type="text" id="bookmarkUrl" placeholder="https://example.com/" autocomplete="off">
+        <div style="display:flex;justify-content:center;gap:10px;margin-top:20px;">
+          <button id="saveBookmarkBtn">Save</button>
+          <button id="cancelBookmarkBtn" style="background-color:#0f0f0f;color:white;" onmouseover="this.style.backgroundColor='#1f1f1f';" onmouseout="this.style.backgroundColor='#0f0f0f';">Cancel</button>
         </div>
+      </div>
+    </div>
 
-        <div id="settings-menu" class="settings-menu"></div>
-        <div id="overlay" class="overlay"></div>
+    <div id="new-tab-modal" class="popup new-tab-popup" style="display:none;">
+      <input type="text" id="newTabInput" placeholder="Search or enter address" autocomplete="off">
+    </div>
 
-        <div class="main-container">
-            <div class="search-title"></div>
-            <div class="search-bar">
-                <i class="fa-regular fa-magnifying-glass" style="position:absolute;top:50%;margin-left:-10px;transform:translateY(-50%);color:#ffffff69;"></i>
-                <input type="text" id="searchInput" placeholder="Have anything in mind?" autocomplete="off">
-                <span class="shortcut-indicator">Ctrl + E</span>
-            </div>
-        </div>
+    <div id="updateSuccess">
+      <i class="fa-solid fa-check-circle" style="font-size:40px;margin-bottom:15px;"></i>
+      <label>Successfully Updated!</label>
+      <p>If you don’t see any changes or the site breaks, do Ctrl + Shift + R a few times</p>
+      <button class="prompt-close-btn" id="updateSuccessClose">Okay</button>
+    </div>
 
-        <div id="iframe-container">
-            <div id="iframe-resize-divider"></div>
-        </div>
+    <div id="iframe-container"><div id="iframe-resize-divider"></div></div>
 
-        <!-- === Movies Overlay === -->
-        <div id="moviesOverlay">
-            <div class="overlay-content">
-                <button id="closeMovies">&times;</button>
-                <iframe src="https://glitch-flix.vercel.app/" allowfullscreen></iframe>
-            </div>
-        </div>
+    <!-- Movies Overlay -->
+    <div id="moviesOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:9999;justify-content:center;align-items:center;">
+      <div style="position:relative;width:80%;height:80%;background:#000;border-radius:12px;overflow:hidden;">
+        <button id="closeMovies" style="position:absolute;top:10px;right:15px;font-size:28px;background:transparent;border:none;color:white;cursor:pointer;">&times;</button>
+        <iframe src="https://glitch-flix.vercel.app/" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>
+      </div>
+    </div>
 
-        <script src="/assets/js/features/games.js" defer></script>
-        <script src="/assets/js/features/shortcuts.js" defer></script>
-        <script src="/assets/js/features/toast.js" defer></script>
-        <script src="/assets/js/vendors/nprogress/nprogress.js" defer></script>
+    <script src="/assets/js/features/games.js" defer></script>
+    <script src="/assets/js/features/shortcuts.js" defer></script>
+    <script src="/assets/js/features/toast.js" defer></script>
+    <script src="/assets/js/vendors/nprogress/nprogress.js" defer></script>
 
-        <script>
-            const encoded = "R2xpdGNoeSBXYXZlcw==";
-            document.getElementById("brand").textContent = atob(encoded);
+    <script>
+      const encoded = "R2xpdGNoeSBXYXZlcw==";
+      document.getElementById("brand").textContent = atob(encoded);
 
-            // Movies overlay logic
-            const moviesBtn = document.getElementById("movies");
-            const moviesOverlay = document.getElementById("moviesOverlay");
-            const closeMovies = document.getElementById("closeMovies");
+      // Movies button overlay logic
+      const moviesBtn = document.getElementById("movies");
+      const moviesOverlay = document.getElementById("moviesOverlay");
+      const closeMovies = document.getElementById("closeMovies");
 
-            moviesBtn.addEventListener("click", () => {
-                moviesOverlay.style.display = "flex";
-            });
+      moviesBtn.addEventListener("click", () => {
+        moviesOverlay.style.display = "flex";
+      });
 
-            closeMovies.addEventListener("click", () => {
-                moviesOverlay.style.display = "none";
-            });
+      closeMovies.addEventListener("click", () => {
+        moviesOverlay.style.display = "none";
+      });
+    </script>
 
-            moviesOverlay.addEventListener("click", (e) => {
-                if (e.target.id === "moviesOverlay") {
-                    moviesOverlay.style.display = "none";
-                }
-            });
-        </script>
-    </main>
+  </main>
 </body>
-</html>
+    </html>
