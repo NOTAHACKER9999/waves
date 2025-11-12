@@ -1,204 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Glitched Browser + Movies Overlay</title>
-  <style>
-    body {
-      margin: 0;
-      background: #0d0d0d;
-      color: white;
-      font-family: "Segoe UI", sans-serif;
-      overflow-x: hidden;
-    }
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=IE7">
+    <meta property="og:site_name" content="Glitchy Waves">
+    <meta name="twitter:site" content="Glitchy Waves">
+    <meta name="theme-color" content="#0056D2">
+    <meta name="description" content="Glitchy Waves - Explore, Play, and Surf the Glitched Web."/>
+    <meta property="og:title" content="Glitchy Waves"/>
+    <meta property="og:description" content="Glitchy Waves - Explore, Play, and Surf the Glitched Web."/>
+    <meta property="og:image" content="/assets/images/icons/favicon.ico"/>
+    <meta property="twitter:title" content="Glitchy Waves"/>
+    <meta property="twitter:description" content="Glitchy Waves - Explore, Play, and Surf the Glitched Web."/>
+    <meta property="twitter:image" content="/assets/images/icons/favicon.ico"/>
+    <meta property="twitter:card" content="summary"/>
+    <title>Glitchy Waves</title>
 
-    /* Top Bar (Browser GUI) */
-    header {
-      background: #121212;
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 2px solid #222;
-    }
+    <link rel="icon" href="/assets/images/icons/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="/assets/css/index.css" />
+    <link rel="stylesheet" href="/assets/css/vendors/font-awesome/css/all.css" />
+    <link rel="stylesheet" href="/assets/css/settings.css" />
+    <link rel="stylesheet" href="/assets/css/games.css" />
+    <link rel="stylesheet" href="/assets/css/toast.css" />
+    <link rel="stylesheet" href="/assets/css/vendors/nprogress/nprogress.css" />
 
-    header input {
-      width: 70%;
-      padding: 8px 10px;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-      background: #1a1a1a;
-      color: white;
-    }
+    <style>
+        /* === Movies Overlay === */
+        #moviesBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9998;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, filter 0.3s ease;
+        }
 
-    header button {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 8px;
-      background: #2b2b2b;
-      color: white;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
+        #moviesBtn img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(255,255,255,0.25);
+        }
 
-    header button:hover {
-      background: #3b3b3b;
-    }
+        #moviesBtn:hover {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+        }
 
-    /* Iframe Browser Area */
-    iframe#browserFrame {
-      width: 100%;
-      height: calc(100vh - 60px);
-      border: none;
-      background: #000;
-    }
+        #moviesOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
 
-    /* Floating Movies Button */
-    .movies-button {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      z-index: 9999;
-      transition: transform 0.2s ease, filter 0.3s ease;
-    }
+        #moviesOverlay .overlay-content {
+            position: relative;
+            width: 80%;
+            height: 80%;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            animation: fadeIn 0.3s ease;
+        }
 
-    .movies-button img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      box-shadow: 0 0 15px rgba(255, 255, 255, 0.25);
-    }
+        #moviesOverlay iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
 
-    .movies-button:hover {
-      transform: scale(1.1);
-      filter: brightness(1.2);
-    }
+        #closeMovies {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.2s ease;
+        }
 
-    /* Overlay Background */
-    .overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(10, 10, 10, 0.85);
-      backdrop-filter: blur(6px);
-      z-index: 9998;
-      justify-content: center;
-      align-items: center;
-    }
+        #closeMovies:hover {
+            transform: scale(1.2);
+        }
 
-    /* Overlay Content Box */
-    .overlay-content {
-      position: relative;
-      width: 80%;
-      height: 80%;
-      background: #000;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
-      animation: fadeIn 0.3s ease;
-    }
-
-    .overlay-content iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      border-radius: 12px;
-    }
-
-    /* Close Button */
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 28px;
-      background: transparent;
-      border: none;
-      color: white;
-      cursor: pointer;
-      z-index: 10;
-      transition: transform 0.2s ease;
-    }
-
-    .close-btn:hover {
-      transform: scale(1.2);
-    }
-
-    /* Animation */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: scale(0.96);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-  </style>
+        @keyframes fadeIn {
+            from {opacity: 0; transform: scale(0.95);}
+            to {opacity: 1; transform: scale(1);}
+        }
+    </style>
 </head>
+
 <body>
-  <header>
-    <input type="text" id="urlInput" placeholder="Enter site URL..." />
-    <button id="goBtn">Go</button>
-  </header>
+    <!-- Scripts -->
+    <script src="/assets/js/core/load.js"></script>
+    <script src="/assets/js/features/settings.js"></script>
+    <script type="module" src="/assets/js/index.js"></script>
+    <script src="/assets/js/core/register.js" defer></script>
 
-  <iframe id="browserFrame" src="https://duckduckgo.com"></iframe>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="tabs-header"><span>Tabs</span></div>
+        <button id="add-tab-btn"><i class="fa-regular fa-plus"></i> New Tab</button>
+        <div id="tabs-container" class="tabs-container"></div>
+    </nav>
 
-  <!-- Movies Button -->
-  <button id="moviesBtn" class="movies-button" title="Open GlitchFlix">
-    <img src="https://raw.githubusercontent.com/NOTAHACKER9999/waves/refs/heads/main/Custom/Logos/Movies.png" alt="Movies" />
-  </button>
+    <main class="content-wrapper">
+        <div class="main-header">
+            <div class="nav-controls">
+                <a id="toggle-sidebar-btn" href="#"><i class="fa-light fa-table-rows"></i></a>
+                <a id="backIcon" href="#"><i class="fa-regular fa-chevron-left"></i></a>
+                <a id="forwardIcon" href="#"><i class="fa-regular fa-chevron-right"></i></a>
+                <a id="refreshIcon" href="#"><i class="fa-regular fa-rotate-right"></i></a>
+            </div>
 
-  <!-- Movies Overlay -->
-  <div id="moviesOverlay" class="overlay">
-    <div class="overlay-content">
-      <button class="close-btn" id="closeMovies">&times;</button>
-      <iframe src="https://glitch-flix.vercel.app/" frameborder="0" allowfullscreen></iframe>
-    </div>
-  </div>
+            <div class="omnibox">
+                <i id="lockIcon" class="fa-regular fa-unlock-keyhole"></i>
+                <input type="text" id="searchInputt" placeholder="Search or enter address" autocomplete="off">
+                <div id="suggestions-container-nav" class="suggestions-box"></div>
+            </div>
 
-  <script>
-    // Browser search/navigation
-    const goBtn = document.getElementById("goBtn");
-    const urlInput = document.getElementById("urlInput");
-    const browserFrame = document.getElementById("browserFrame");
+            <div class="window-controls">
+                <a href="/"><i class="fa-regular fa-house-chimney-window"></i></a>
+                <a id="fullscreenBtn" href="#"><i class="fa-regular fa-expand"></i></a>
+                <a id="splitViewBtn" href="#"><i class="fa-regular fa-table-columns"></i></a>
+                <a id="erudaBtn" href="#"><i class="fa-regular fa-square-code"></i></a>
+            </div>
+        </div>
 
-    function goToSite() {
-      let url = urlInput.value.trim();
-      if (!url) return;
-      if (!url.startsWith("http")) url = "https://" + url;
-      browserFrame.src = url;
-    }
+        <!-- Left icons -->
+        <div id="left-icons">
+            <div id="branding-container" class="icon-btn">
+                <span id="brand"></span>
+                <div id="oneko"></div>
+            </div>
 
-    goBtn.addEventListener("click", goToSite);
-    urlInput.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") goToSite();
-    });
+            <a href="#" id="games" class="icon-btn" title="Games">
+                <i class="fa-solid fa-gamepad-modern"></i>
+            </a>
+        </div>
 
-    // Show overlay when Movies button clicked
-    document.getElementById("moviesBtn").addEventListener("click", () => {
-      document.getElementById("moviesOverlay").style.display = "flex";
-    });
+        <!-- Right icons -->
+        <div id="right-top-icons">
+            <a href="#" id="settings" class="icon-btn" title="Settings">
+                <i class="settings fa-regular fa-gear"></i>
+            </a>
+        </div>
 
-    // Close overlay when X clicked
-    document.getElementById("closeMovies").addEventListener("click", () => {
-      document.getElementById("moviesOverlay").style.display = "none";
-    });
+        <!-- Removed "Support me" and ads -->
 
-    // Optional: Close when clicking outside the iframe
-    document.getElementById("moviesOverlay").addEventListener("click", (e) => {
-      if (e.target.id === "moviesOverlay") {
-        document.getElementById("moviesOverlay").style.display = "none";
-      }
-    });
-  </script>
+        <div id="settings-menu" class="settings-menu"></div>
+        <div id="overlay" class="overlay"></div>
+
+        <div class="main-container">
+            <div class="search-title"></div>
+            <div class="search-bar">
+                <i class="fa-regular fa-magnifying-glass" style="position:absolute;top:50%;margin-left:-10px;transform:translateY(-50%);color:#ffffff69;"></i>
+                <input type="text" id="searchInput" placeholder="Have anything in mind?" autocomplete="off">
+                <span class="shortcut-indicator">Ctrl + E</span>
+            </div>
+        </div>
+
+        <div id="iframe-container">
+            <div id="iframe-resize-divider"></div>
+        </div>
+
+        <!-- === Movies Floating Button === -->
+        <button id="moviesBtn" title="Open GlitchFlix">
+            <img src="https://raw.githubusercontent.com/NOTAHACKER9999/waves/refs/heads/main/Custom/Logos/Movies.png" alt="Movies">
+        </button>
+
+        <!-- === Movies Overlay === -->
+        <div id="moviesOverlay">
+            <div class="overlay-content">
+                <button id="closeMovies">&times;</button>
+                <iframe src="https://glitch-flix.vercel.app/" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <script src="/assets/js/features/games.js" defer></script>
+        <script src="/assets/js/features/shortcuts.js" defer></script>
+        <script src="/assets/js/features/toast.js" defer></script>
+        <script src="/assets/js/vendors/nprogress/nprogress.js" defer></script>
+
+        <script>
+            const encoded = "R2xpdGNoeSBXYXZlcw==";
+            document.getElementById("brand").textContent = atob(encoded);
+
+            // Movies overlay logic
+            const moviesBtn = document.getElementById("moviesBtn");
+            const moviesOverlay = document.getElementById("moviesOverlay");
+            const closeMovies = document.getElementById("closeMovies");
+
+            moviesBtn.addEventListener("click", () => {
+                moviesOverlay.style.display = "flex";
+            });
+
+            closeMovies.addEventListener("click", () => {
+                moviesOverlay.style.display = "none";
+            });
+
+            moviesOverlay.addEventListener("click", (e) => {
+                if (e.target.id === "moviesOverlay") {
+                    moviesOverlay.style.display = "none";
+                }
+            });
+        </script>
+    </main>
 </body>
 </html>
