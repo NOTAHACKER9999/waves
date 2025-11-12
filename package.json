@@ -1,6 +1,6 @@
 {
-  "name": "waves",
-  "version": "3.3.1",
+  "name": "Glitchy Waves",
+  "version": "1.5.2³",
   "description": "A really cool web-proxy",
   "type": "module",
   "packageManager": "bun@latest",
