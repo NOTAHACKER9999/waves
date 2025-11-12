@@ -25,7 +25,7 @@
     "@titaniumnetwork-dev/ultraviolet": "^3.2.10",
     "wisp-server-node": "1.1.7",
     "compression": "^1.7.4",
-    "dotenv": "^16.4.5",
+    "dotenv": "^17.2.3",
     "express": "^5.0.0-beta.3",
     "express-rate-limit": "^7.3.1",
     "helmet": "^7.1.0",
