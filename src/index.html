@@ -18,7 +18,7 @@
   <meta property="twitter:card" content="summary"/>
   <title>Glitchy Waves</title>
 
-  <!-- Safe Assets (No ads) -->
+  <!-- Safe Assets -->
   <link rel="preload" href="/assets/css/index.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <link rel="preload" href="/assets/css/vendors/font-awesome/css/all.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
   <link rel="preload" href="/assets/css/settings.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
@@ -31,7 +31,7 @@
     <link rel="stylesheet" href="/assets/css/vendors/font-awesome/css/all.css" />
   </noscript>
 
-  <!-- Malware-free Title Lock -->
+  <!-- Title Lock -->
   <script>
     (function () {
       const fixed = document.title;
@@ -42,14 +42,95 @@
       Object.defineProperty(document, "title", { get: () => fixed, set: () => {} });
     })();
   </script>
+
+  <!-- 🔥 FULL MALWARE BLOCKER (DOMAIN + IP + SCRIPTS + SW + IFRAME + FETCH) -->
+  <script>
+    const BLOCKED_HOSTS = [
+      "spaniardinformationbookworm.com",
+      "www.spaniardinformationbookworm.com"
+    ];
+
+    const BLOCKED_IPS = [
+      "172.240.253.132"
+    ];
+
+    function isBlocked(url) {
+      url = url.toString().toLowerCase();
+      return BLOCKED_HOSTS.some(h => url.includes(h)) ||
+             BLOCKED_IPS.some(ip => url.includes(ip));
+    }
+
+    /* 🧱 Block iframe loading */
+    const realSet = HTMLIFrameElement.prototype.setAttribute;
+    HTMLIFrameElement.prototype.setAttribute = function (name, value) {
+      if (name === "src" && value && isBlocked(value)) {
+        console.warn("Blocked malicious iframe:", value);
+        this.srcdoc = "<h1 style='color:red;text-align:center;margin-top:20%;'>Blocked Malicious Site</h1>";
+        return;
+      }
+      return realSet.call(this, name, value);
+    };
+
+    /* 🧱 Block fetch() */
+    const realFetch = window.fetch;
+    window.fetch = function (url, opts) {
+      if (isBlocked(url)) {
+        console.warn("Blocked malicious fetch:", url);
+        return Promise.reject("Blocked malicious request");
+      }
+      return realFetch(url, opts);
+    };
+
+    /* 🧱 Block script injection */
+    const realAppend = Element.prototype.appendChild;
+    Element.prototype.appendChild = function (el) {
+      if (el.tagName === "SCRIPT" && el.src && isBlocked(el.src)) {
+        console.warn("Blocked malicious script:", el.src);
+        return el;
+      }
+      return realAppend.call(this, el);
+    };
+
+    /* 🧱 Block dynamic import() */
+    const realImport = window.import;
+    window.import = function (u) {
+      if (isBlocked(u)) {
+        console.warn("Blocked malicious import:", u);
+        return Promise.reject("Blocked malicious module");
+      }
+      return realImport(u);
+    };
+
+    /* 🧱 Block Service Workers */
+    if ("serviceWorker" in navigator) {
+      const realSW = navigator.serviceWorker.register;
+      navigator.serviceWorker.register = function (url, opts) {
+        if (isBlocked(url)) {
+          console.warn("Blocked malicious SW:", url);
+          return Promise.reject("Blocked SW");
+        }
+        return realSW.call(navigator.serviceWorker, url, opts);
+      };
+    };
+
+    /* 🧱 Block entering URL in omnibox */
+    window.addEventListener("DOMContentLoaded", () => {
+      const input = document.getElementById("searchInputt");
+      if (!input) return;
+      input.addEventListener("input", () => {
+        const v = input.value;
+        if (isBlocked(v)) {
+          input.value = "";
+          alert("⚠ Blocked malicious site");
+        }
+      });
+    });
+
+  </script>
+
 </head>
 
 <body>
-
-  <!-- ❌ REMOVED: All /b?id= malware scripts -->
-  <!-- ❌ REMOVED: All ad injections -->
-  <!-- ❌ REMOVED: All support-me widgets -->
-  <!-- ❌ REMOVED: Remote advertising or tracking -->
 
   <!-- SAFE CORE SCRIPTS -->
   <script src="/assets/js/core/load.js"></script>
@@ -94,12 +175,10 @@
         <div id="oneko"></div>
       </div>
 
-      <!-- Games Button -->
       <a id="games" class="icon-btn" title="Games">
         <i class="fa-solid fa-gamepad-modern"></i>
       </a>
 
-      <!-- Movies Button (New) -->
       <a id="movies" class="icon-btn" title="Movies">
         <img src="https://raw.githubusercontent.com/NOTAHACKER9999/waves/refs/heads/main/Custom/Logos/Movies.png"
              style="width:38px;height:38px;border-radius:8px;">
@@ -129,7 +208,6 @@
       </div>
     </div>
 
-    <!-- Run Games, Toast, Shortcuts -->
     <script src="/assets/js/features/games.js" defer></script>
     <script src="/assets/js/features/shortcuts.js" defer></script>
     <script src="/assets/js/features/toast.js" defer></script>
@@ -138,7 +216,6 @@
     <script>
       document.getElementById("brand").textContent = "Glitchy Waves";
 
-      // Movies overlay script
       const movies = document.getElementById("movies");
       const overlay = document.getElementById("moviesOverlay");
       const closeBtn = document.getElementById("closeMovies");
@@ -146,20 +223,6 @@
       movies.onclick = () => overlay.style.display = "flex";
       closeBtn.onclick = () => overlay.style.display = "none";
       overlay.onclick = e => { if (e.target === overlay) overlay.style.display = "none"; };
-
-      // 🚫 Block spaniardinformationbookworm.com in browser bar input
-      const searchInput = document.getElementById("searchInputt");
-      searchInput.addEventListener("input", () => {
-        const blocked = ["spaniardinformationbookworm.com"];
-        const val = searchInput.value.toLowerCase();
-        for (const domain of blocked) {
-          if (val.includes(domain)) {
-            searchInput.value = "";
-            alert("Access to this domain is blocked for security reasons.");
-            break;
-          }
-        }
-      });
     </script>
 
   </main>
