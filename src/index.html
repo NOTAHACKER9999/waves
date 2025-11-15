@@ -146,6 +146,20 @@
       movies.onclick = () => overlay.style.display = "flex";
       closeBtn.onclick = () => overlay.style.display = "none";
       overlay.onclick = e => { if (e.target === overlay) overlay.style.display = "none"; };
+
+      // 🚫 Block spaniardinformationbookworm.com in browser bar input
+      const searchInput = document.getElementById("searchInputt");
+      searchInput.addEventListener("input", () => {
+        const blocked = ["spaniardinformationbookworm.com"];
+        const val = searchInput.value.toLowerCase();
+        for (const domain of blocked) {
+          if (val.includes(domain)) {
+            searchInput.value = "";
+            alert("Access to this domain is blocked for security reasons.");
+            break;
+          }
+        }
+      });
     </script>
 
   </main>
