@@ -9,8 +9,8 @@
     "node": ">=18.0.0"
   },
   "author": {
-    "name": "sent",
-    "email": "sentttt@proton.me"
+    "name": "GLITCH OVERRIDE",
+    "email": "glitchedadmin1@gmail.com"
   },
   "scripts": {
     "start": "NODE_ENV=production node --max-old-space-size=4096 --turbo-fast-api-calls index.mjs",
