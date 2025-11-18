@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gamesMenu = document.getElementById('games-menu');
     if (!gamesMenu) return;
 
-    // 🔹 Use your real JSON file here
+    // JSON file with your games
     const ZONES_URL = "https://raw.githubusercontent.com/NOTAHACKER9999/Hypper-Drive/main/Games/zones.json";
 
     const gamesMenuContent = gamesMenu.querySelector('.games-menu-content');
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let gameDataPromise = null;
     let debounceTimer = null;
 
-    // Fetch Hypper-Drive JSON
+    // Fetch game data
     function getGameData() {
         if (!gameDataPromise) {
             gameDataPromise = fetch(ZONES_URL, { cache: "no-store" })
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return gameDataPromise;
     }
 
-    // Show menu overlay
+    // Show menu
     function showGamesMenu() {
         if (isMenuTransitioning || gamesMenu.classList.contains('open')) return;
         isMenuTransitioning = true;
@@ -79,11 +79,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (gamesDataLoaded) {
             resetAndRenderGames();
         } else {
-            getGameData().then(resetAndRenderGames)
-                         .catch(() => alert("Error loading games"));
+            getGameData()
+                .then(resetAndRenderGames)
+                .catch(() => alert("Error loading games"));
         }
     }
 
+    // Hide menu
     function hideGamesMenu() {
         if (isMenuTransitioning || !gamesMenu.classList.contains('open')) return;
         isMenuTransitioning = true;
@@ -100,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Create card
+    // Create a game card
     function createGameCard(game) {
         const card = document.createElement('div');
         card.className = 'game-card';
@@ -115,10 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p>${game.description}</p>
             </div>
         `;
+
         return card;
     }
 
-    // Re-render
+    // Render grid
     function resetAndRenderGames() {
         const query = gamesSearchInput?.value.toLowerCase().trim() || "";
         filteredGames = query
@@ -126,49 +129,48 @@ document.addEventListener('DOMContentLoaded', () => {
             : allGames;
 
         gamesGrid.innerHTML = '';
+
         if (filteredGames.length) {
-            const fragment = document.createDocumentFragment();
-            filteredGames.forEach(game => fragment.appendChild(createGameCard(game)));
-            gamesGrid.appendChild(fragment);
+            const frag = document.createDocumentFragment();
+            filteredGames.forEach(game => frag.appendChild(createGameCard(game)));
+            gamesGrid.appendChild(frag);
             gamesGridContainer.style.display = 'grid';
         } else {
             gamesGridContainer.style.display = 'none';
         }
     }
 
+    // Update search bar placeholder
     function updateGamesPlaceholder() {
         if (gamesSearchInput)
             gamesSearchInput.placeholder = `Search ${allGames.length} games...`;
     }
 
+    // Debounce search
     function debouncedRenderGames() {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(resetAndRenderGames, 200);
     }
 
-    // Handle click → execute HTML fully
-    gamesGrid.addEventListener('click', async (e) => {
+    // 🎮 **OPEN GAME AS A REAL FULL FILE**
+    gamesGrid.addEventListener('click', (e) => {
         const card = e.target.closest('.game-card');
         if (!card) return;
+
         const url = card.dataset.gameUrl;
 
-        try {
-            const res = await fetch(url);
-            if (!res.ok) throw new Error("Failed to load game HTML");
-            const html = await res.text();
-            document.open();
-            document.write(html);
-            document.close();
-        } catch (err) {
-            alert("Error loading game: " + err.message);
-        }
+        // This loads the full file exactly as hosted
+        window.location.href = url;
     });
 
-    // Event bindings
+    // Event listeners
     if (gamesSearchInput) gamesSearchInput.addEventListener('input', debouncedRenderGames);
     if (gamesLink) gamesLink.addEventListener('click', e => { e.preventDefault(); showGamesMenu(); });
     if (closeGamesMenuBtn) closeGamesMenuBtn.addEventListener('click', hideGamesMenu);
-    gamesMenu.addEventListener('click', e => { if (e.target === gamesMenu) hideGamesMenu(); });
+
+    gamesMenu.addEventListener('click', e => {
+        if (e.target === gamesMenu) hideGamesMenu();
+    });
 
     window.showGamesMenu = showGamesMenu;
     window.hideGamesMenu = hideGamesMenu;
