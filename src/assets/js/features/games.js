@@ -1,118 +1,168 @@
-const GAMES_JSON = "https://raw.githubusercontent.com/NOTAHACKER9999/Hypper-Drive/main/Games/zones.json";
-const FALLBACK = "https://dummyimage.com/300x450/111/ff0000&text=No+Image";
+document.addEventListener('DOMContentLoaded', () => {
+    const gamesMenu = document.getElementById('games-menu');
+    if (!gamesMenu) return;
 
-let allGames = [];
-let recentGames = JSON.parse(localStorage.getItem("recentGames") || "[]");
+    const ZONES_URL = "https://raw.githubusercontent.com/NOTAHACKER9999/Hypper-Drive/main/Games/zones.json";
 
-/* DOM */
-const contentArea = document.getElementById("contentArea");
-const libraryTopbar = document.getElementById("libraryTopbar");
-const gamesTab = document.getElementById("gamesTab");
+    const gamesMenuContent = gamesMenu.querySelector('.games-menu-content');
+    const closeGamesMenuBtn = document.getElementById('close-games-menu');
+    const gamesSearchInput = document.getElementById('gamesSearchInput');
+    const gamesGrid = gamesMenu.querySelector('.games-grid');
+    const gamesGridContainer = gamesMenu.querySelector('.games-grid-container');
+    const gamesLink = document.getElementById('games');
+    const shortcutPromptOverlay = document.getElementById('overlay');
 
-/* HELPERS */
-function saveRecents() {
-    localStorage.setItem("recentGames", JSON.stringify(recentGames));
-}
-function addRecentGame(g) {
-    recentGames = [g, ...recentGames.filter(x => x.url !== g.url)].slice(0, 10);
-    saveRecents();
-}
-function el(t, p = {}, ...kids) {
-    const e = document.createElement(t);
-    Object.assign(e, p);
-    kids.forEach(k => typeof k === "string" ? e.appendChild(document.createTextNode(k)) : k && e.appendChild(k));
-    return e;
-}
+    let allGames = [];
+    let filteredGames = [];
+    let gamesDataLoaded = false;
+    let debounceTimer = null;
+    let loadingPromise = null;
 
-/* DASHBOARD (Recent Games only) */
-function renderDashboard() {
-    libraryTopbar.style.display = "none";
-    contentArea.innerHTML = "";
+    // 🔹 Fetch JSON once
+    function getGameData() {
+        if (!loadingPromise) {
+            loadingPromise = fetch(ZONES_URL, { cache: "no-store" })
+                .then(res => {
+                    if (!res.ok) throw new Error("Failed to load JSON");
+                    return res.json();
+                })
+                .then(data => {
+                    allGames = data.map(g => ({
+                        id: g.name.replace(/\s+/g, "_").toLowerCase(),
+                        name: g.name,
+                        author: g.author || "Unknown",
+                        description: g.description || "",
+                        coverUrl: g.cover,
+                        url: g.url,
+                    }));
+                    gamesDataLoaded = true;
+                    updateGamesPlaceholder();
+                    return allGames;
+                })
+                .catch(err => {
+                    console.error("Error loading zones.json:", err);
+                    loadingPromise = null;
+                    throw err;
+                });
+        }
+        return loadingPromise;
+    }
 
-    contentArea.appendChild(el('h1', {}, 'System Crash — Dashboard'));
-
-    // Recent games
-    contentArea.appendChild(el('div', { className: 'section-title' }, 'Recent Games'));
-    const gGrid = el('div', { className: 'grid' });
-    if (recentGames.length === 0) gGrid.appendChild(el('div', { className: 'muted' }, 'No recent games'));
-    recentGames.forEach(g => {
-        const card = el('div', { className: 'card', onclick: () => openGame(g) });
-        card.appendChild(el('img', { src: g.cover || FALLBACK }));
-        card.appendChild(el('h3', {}, g.name));
-        gGrid.appendChild(card);
-    });
-    contentArea.appendChild(gGrid);
-}
-
-/* GAMES LIBRARY */
-async function renderGamesLibrary() {
-    libraryTopbar.style.display = "flex";
-    gamesTab.classList.add("active");
-    contentArea.innerHTML = "";
-
-    // Search input
-    const searchRow = el('div', { className: 'search-row' });
-    const input = el('input', { placeholder: 'Search games...', oninput: filterGames, id: 'gamesSearch' });
-    const count = el('div', { className: 'count', id: 'gamesCount' });
-    searchRow.appendChild(input);
-    searchRow.appendChild(count);
-    contentArea.appendChild(searchRow);
-
-    // Games grid
-    const grid = el('div', { className: 'grid', id: 'gamesGrid' });
-    contentArea.appendChild(grid);
-
-    if (allGames.length === 0) {
-        try {
-            const r = await fetch(GAMES_JSON);
-            const raw = await r.json();
-            allGames = raw.map(g => ({ name: g.name, cover: g.cover, url: g.url }));
-        } catch (e) {
-            grid.appendChild(el('div', { className: 'muted' }, 'Failed to load games'));
+    // 🔹 Show menu
+    function showGamesMenu() {
+        if (!gamesDataLoaded) {
+            getGameData().then(() => {
+                showMenuAfterLoad();
+                resetAndRenderGames();
+            });
+        } else {
+            showMenuAfterLoad();
+            resetAndRenderGames();
         }
     }
 
-    filterGames();
+    function showMenuAfterLoad() {
+        gamesMenu.style.display = 'flex';
+        gamesMenu.classList.add('open');
+        gamesMenuContent.classList.add('open');
+        shortcutPromptOverlay?.classList.add('show');
 
-    function filterGames() {
-        const q = document.getElementById('gamesSearch').value.toLowerCase();
-        const filtered = allGames.filter(g => g.name.toLowerCase().includes(q));
-        const gGrid = document.getElementById('gamesGrid');
-        gGrid.innerHTML = "";
-        filtered.forEach(g => {
-            const c = el('div', { className: 'card', onclick: () => openGame(g) });
-            c.appendChild(el('img', { src: g.cover || FALLBACK }));
-            c.appendChild(el('h3', {}, g.name));
-            gGrid.appendChild(c);
-        });
-        count.textContent = `${filtered.length} Games Found`;
+        if (gamesSearchInput) {
+            gamesSearchInput.value = '';
+            gamesSearchInput.focus();
+        }
     }
-}
 
-/* OPEN GAME AS FULL FILE */
-async function openGame(game) {
-    if (!game.url) {
-        alert("No game URL");
-        return;
+    function hideGamesMenu() {
+        gamesMenu.classList.remove('open');
+        gamesMenuContent.classList.remove('open');
+        gamesMenu.style.display = 'none';
+        shortcutPromptOverlay?.classList.remove('show');
     }
-    addRecentGame(game);
 
-    try {
-        const r = await fetch(game.url);
-        const html = await r.text();
+    // 🔹 Create a game card
+    function createGameCard(game) {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.dataset.url = game.url;
 
-        // Run HTML directly
-        document.open();
-        document.write(html);
-        document.close();
+        card.innerHTML = `
+            <div class="game-image">
+                <img src="${game.coverUrl}" alt="${game.name}">
+            </div>
+            <div class="game-info">
+                <h2>${game.name}</h2>
+                <p>${game.description}</p>
+            </div>
+        `;
 
-    } catch (e) {
-        alert("Failed to load game");
+        return card;
     }
-}
 
-/* TAB HANDLERS */
-gamesTab.onclick = () => renderGamesLibrary();
+    // 🔹 Render grid
+    function resetAndRenderGames() {
+        const q = gamesSearchInput?.value.toLowerCase().trim() || "";
+        filteredGames = q ? allGames.filter(g => g.name.toLowerCase().includes(q)) : allGames;
 
-/* INITIAL RENDER */
-renderDashboard();
+        gamesGrid.innerHTML = "";
+
+        if (filteredGames.length === 0) {
+            gamesGridContainer.style.display = "none";
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        filteredGames.forEach(game => fragment.appendChild(createGameCard(game)));
+        gamesGrid.appendChild(fragment);
+
+        gamesGridContainer.style.display = "grid";
+    }
+
+    function updateGamesPlaceholder() {
+        if (gamesSearchInput)
+            gamesSearchInput.placeholder = `Search ${allGames.length} games...`;
+    }
+
+    function debouncedRenderGames() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(resetAndRenderGames, 200);
+    }
+
+    // ✅ **THIS loads the game as a full file — NO BLOB, NO IFRAME**
+    async function openGameAsFullFile(url) {
+        try {
+            const res = await fetch(url, { cache: "no-store" });
+            if (!res.ok) throw new Error("Failed to fetch game");
+
+            const html = await res.text();
+
+            // 🔥 This replaces the entire page with the game's HTML
+            document.open();
+            document.write(html);
+            document.close();
+
+        } catch (err) {
+            alert("Error loading game: " + err.message);
+        }
+    }
+
+    // 🔹 Click → load game
+    gamesGrid.addEventListener('click', e => {
+        const card = e.target.closest('.game-card');
+        if (!card) return;
+
+        const url = card.dataset.url;
+        if (!url) return;
+
+        openGameAsFullFile(url);
+    });
+
+    // 🔹 Bind events
+    if (gamesSearchInput) gamesSearchInput.addEventListener('input', debouncedRenderGames);
+    if (gamesLink) gamesLink.addEventListener('click', e => { e.preventDefault(); showGamesMenu(); });
+    if (closeGamesMenuBtn) closeGamesMenuBtn.addEventListener('click', hideGamesMenu);
+    gamesMenu.addEventListener('click', e => { if (e.target === gamesMenu) hideGamesMenu(); });
+
+    // Load data on startup
+    getGameData();
+});
