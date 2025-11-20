@@ -571,15 +571,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div id="about-content" class="tab-content">
                         <label>Credits:</label>
-                        <p>GN-Math - All of the games</p>
-                        <p>Bog - Ports for Hollow Knight, RE:RUN, and Touhou Mother
+                        <p>Hypper Drive- All of the games</p>
                         <p>Titanium Network - Ultraviolet</p>
                         <p>Mercury Workshop - Scramjet, Epxoy, and Libcurl</p>
                         <label>You have reached the end!</label>
                         <p>
-                            Thank you so much for using <a href="https://waves.lat/" target="_blank" class="hover-link">Waves!</a> 
-                            If you have any suggestions or issues, please contact us on our <a href="https://discord.gg/dJvdkPRheV" target="_blank" class="hover-link">Discord server</a> 
-                            or open an issue on our <a href="https://github.com/l4uy/Waves" target="_blank" class="hover-link">Github repository</a> <3
+                            Thank you so much for using <a href="https://waves-ajpp.vercel.app" target="_blank" class="hover-link">Glitchy Waves</a> 
+                            or open an issue on our <a href="https://github.com/NOTAHACKER9999/waves" target="_blank" class="hover-link">Github repository</a> <3
                         </p>
                     </div>
                 </div>
