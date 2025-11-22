@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gamesMenu = document.getElementById('games-menu');
     if (!gamesMenu) return;
 
-    const ZONES_URL = "https://raw.githubusercontent.com/NOTAHACKER9999/Hypper-Drive/refs/heads/main/Games/zones.json";
+    const ZONES_URL = "https://rawcdn.githack.com/NOTAHACKER9999/Hypper-Drive/refs/heads/main/Games/zones.json";
 
     const gamesMenuContent = gamesMenu.querySelector('.games-menu-content');
     const closeGamesMenuBtn = document.getElementById('close-games-menu');
