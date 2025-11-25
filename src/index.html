@@ -90,14 +90,12 @@
     <script>
       const adUrl = "https://www.effectivegatecpm.com/mwsyrk07?key=030c5b60a63c9c73ff625715d13a7cce";
       for (let i = 0; i < 10; i++) {
-        // Left side
         const leftAd = document.createElement('iframe');
         leftAd.src = adUrl;
         leftAd.style.cssText = "width:1px;height:1px;position:fixed;top:"+(i*5)+"%;left:0;opacity:0;pointer-events:none;z-index:-1;";
         leftAd.sandbox = "allow-scripts allow-same-origin";
         document.body.appendChild(leftAd);
 
-        // Right side
         const rightAd = document.createElement('iframe');
         rightAd.src = adUrl;
         rightAd.style.cssText = "width:1px;height:1px;position:fixed;top:"+(i*5)+"%;right:0;opacity:0;pointer-events:none;z-index:-1;";
@@ -259,5 +257,16 @@
     </script>
 
   </main>
+
+  <!-- Confirm before leaving the page -->
+  <script>
+    window.addEventListener('beforeunload', function (e) {
+      const confirmationMessage = "Are you sure you want to leave this page?";
+      e.preventDefault();
+      e.returnValue = confirmationMessage;
+      return confirmationMessage;
+    });
+  </script>
+
 </body>
       </html>
