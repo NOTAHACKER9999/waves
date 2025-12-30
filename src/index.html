@@ -6,13 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=IE7">
 
   <title>Glitchy Waves</title>
-
   <meta name="theme-color" content="#0056D2">
-  <meta name="description" content="Glitchy Waves Proxy Core"/>
 
   <link rel="icon" href="./assets/images/icons/favicon.ico" type="image/x-icon" />
 
-  <!-- Core styles ONLY -->
+  <!-- REQUIRED styles -->
   <link rel="preload" href="./assets/css/index.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="preload" href="./assets/css/settings.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <link rel="preload" href="./assets/css/toast.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -27,9 +25,9 @@
   <!-- Lock title -->
   <script>
     (function () {
-      const fixedTitle = document.title;
-      Object.defineProperty(document, 'title', {
-        get: () => fixedTitle,
+      const t = document.title;
+      Object.defineProperty(document, "title", {
+        get: () => t,
         set: () => {}
       });
     })();
@@ -38,61 +36,90 @@
 
 <body>
 
-  <!-- ================= PROXY BACKEND LOADER ================= -->
-  <script>
-    (function () {
-      const encS = "c2NyYW1qZXQ=";      // scramjet
-      const encU = "dWx0cmF2aW9sZXQ=";  // ultraviolet
-      const decode = s => atob(s);
+<!-- ================= BACKEND LOADER ================= -->
+<script>
+(function () {
+  const encS = "c2NyYW1qZXQ=";      // scramjet
+  const encU = "dWx0cmF2aW9sZXQ=";  // ultraviolet
+  const decode = s => atob(s);
 
-      let backend = decode(encS);
+  let backend = decode(encS);
+  try {
+    if (localStorage.getItem("backend") === decode(encU)) {
+      backend = decode(encU);
+    }
+  } catch {}
 
-      try {
-        const stored = localStorage.getItem("backend");
-        if (stored === decode(encU)) backend = decode(encU);
-      } catch {}
+  document.write('<script src="/b?id=1"><\/script>');
 
-      document.write('<script src="/b?id=1"><\/script>');
+  if (backend === decode(encS)) {
+    document.write('<script src="/b?id=2"><\/script>');
+  } else {
+    document.write('<script src="/b?id=3"><\/script>');
+    document.write('<script src="/b?id=4"><\/script>');
+  }
+})();
+</script>
 
-      if (backend === decode(encS)) {
-        document.write('<script src="/b?id=2"><\/script>');
-      } else {
-        document.write('<script src="/b?id=3"><\/script>');
-        document.write('<script src="/b?id=4"><\/script>');
-      }
-    })();
-  </script>
+<!-- ================= CORE ================= -->
+<script src="./assets/js/core/load.js"></script>
+<script src="./assets/js/core/register.js" defer></script>
+<script src="./assets/js/features/settings.js" defer></script>
+<script src="./assets/js/features/toast.js" defer></script>
 
-  <!-- ================= CORE ================= -->
-  <script src="./assets/js/core/load.js"></script>
-  <script src="./assets/js/core/register.js" defer></script>
+<!-- ================= PROXY UI ================= -->
+<div class="content-wrapper">
 
-  <!-- ================= SETTINGS + TOAST ================= -->
-  <script src="./assets/js/features/settings.js" defer></script>
-  <script src="./assets/js/features/toast.js" defer></script>
+  <!-- Top navigation (REQUIRED for proxy UX) -->
+  <div class="main-header">
+    <div class="nav-controls">
+      <a id="backIcon" href="#"><i class="fa-regular fa-chevron-left"></i></a>
+      <a id="forwardIcon" href="#"><i class="fa-regular fa-chevron-right"></i></a>
+      <a id="refreshIcon" href="#"><i class="fa-regular fa-rotate-right"></i></a>
+    </div>
 
-  <!-- ================= SETTINGS UI ROOT ================= -->
-  <div id="settings-menu" class="settings-menu"></div>
-  <div id="overlay" class="overlay"></div>
+    <div class="omnibox">
+      <i class="fa-regular fa-unlock-keyhole"></i>
+      <input
+        type="text"
+        id="searchInputt"
+        placeholder="Search or enter address"
+        autocomplete="off"
+      >
+      <div id="suggestions-container-nav" class="suggestions-box"></div>
+    </div>
 
-  <!-- ================= TOAST ROOT ================= -->
-  <div id="toast-container"></div>
-
-  <!-- ================= UPDATE CONFIRM ================= -->
-  <div id="updateSuccess">
-    <i class="fa-solid fa-check-circle" style="font-size:40px;margin-bottom:15px;"></i>
-    <label>Successfully Updated!</label>
-    <p>If something breaks, do Ctrl + Shift + R</p>
-    <button class="prompt-close-btn" id="updateSuccessClose">Okay</button>
+    <div class="window-controls">
+      <a id="settings" href="#"><i class="fa-regular fa-gear"></i></a>
+    </div>
   </div>
 
-  <!-- ================= SAFETY ================= -->
-  <script>
-    window.addEventListener("beforeunload", e => {
-      e.preventDefault();
-      e.returnValue = "";
-    });
-  </script>
+  <!-- ================= IFRAME (CORE OF PROXY) ================= -->
+  <div id="iframe-container">
+    <div id="iframe-resize-divider"></div>
+  </div>
+
+</div>
+
+<!-- ================= SETTINGS + TOAST ROOTS ================= -->
+<div id="settings-menu" class="settings-menu"></div>
+<div id="overlay" class="overlay"></div>
+<div id="toast-container"></div>
+
+<!-- ================= UPDATE PROMPT ================= -->
+<div id="updateSuccess">
+  <i class="fa-solid fa-check-circle" style="font-size:40px;margin-bottom:15px;"></i>
+  <label>Successfully Updated!</label>
+  <button class="prompt-close-btn" id="updateSuccessClose">Okay</button>
+</div>
+
+<!-- ================= SAFETY ================= -->
+<script>
+  window.addEventListener("beforeunload", e => {
+    e.preventDefault();
+    e.returnValue = "";
+  });
+</script>
 
 </body>
 </html>
